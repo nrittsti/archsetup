@@ -1,0 +1,189 @@
+---
+- name: Configure Arch Linux
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Create /etc/hostname
+      ansible.builtin.copy:
+        dest: /etc/hostname
+        content: '{{ hostname }}'
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Create /etc/hosts
+      ansible.builtin.copy:
+        dest: /etc/hosts
+        content: |
+          #<ip-address>	<hostname.domain.org>	<hostname>
+          127.0.0.1 localhost.localdomain	localhost	replaceit
+          ::1 localhost.localdomain	localhost	replaceit
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Set hostname in /etc/hosts
+      ansible.builtin.replace:
+      path: /etc/hosts
+      regexp: "replaceit"
+      replace: "{{ hostname }}"
+    - name: Create locale.conf (1)
+      ansible.builtin.copy:
+        dest: /etc/locale.conf
+        content: |
+          LANG=language
+          LC_NUMERIC=region
+          LC_TIME=region
+          LC_COLLATE=region
+          LC_MONETARY=region
+          LC_PAPER=region
+          LC_NAME=region
+          LC_ADDRESS=region
+          LC_TELEPHONE=region
+          LC_MEASUREMENT=region
+          LC_IDENTIFICATION=region
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Create locale.conf (2)
+      ansible.builtin.replace:
+      path: /etc/locale.conf
+      regexp: "language"
+      replace: "{{ language }}"
+    - name: Create locale.conf (3)
+      ansible.builtin.replace:
+      path: /etc/locale.conf
+      regexp: "region"
+      replace: "{{ region }}"
+    - name: Edit locale.gen
+      ansible.builtin.copy:
+        dest: /etc/locale.gen
+        content: |
+          en_US.UTF-8 UTF-8
+          de_DE.UTF-8 UTF-8
+          de_DE ISO-8859-1
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Generate locale
+      ansible.builtin.command: locale-gen
+    - name: Edit vconsole
+      ansible.builtin.copy:
+        dest: /etc/vconsole.conf
+        content: |
+          KEYMAP=de-latin1-nodeadkeys
+          FONT=ter-118n
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Create temp directories (1)
+      ansible.builtin.copy:
+        dest: /usr/lib/tmpfiles.d/tmp.conf
+        content: |
+          q /tmp 1777 root root 10d
+          q /var/tmp 1777 root root 30d
+          D /tmp/firefox 0755 replaceit replaceit
+          D /tmp/vivaldi 0755 replaceit replaceit
+          D /tmp/thunderbird 0755 replaceit replaceit
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Create temp directories (2)
+      ansible.builtin.replace:
+      path: /usr/lib/tmpfiles.d/tmp.conf
+      regexp: "replaceit"
+      replace: "{{ username }}"
+    - name: Timezone
+      ansible.builtin.file:
+        src: /usr/share/zoneinfo/Europe/Berlin
+        dest: /etc/localtime
+        state: link
+    - name: Enable Networkmanager
+      ansible.builtin.systemd:
+        name: NetworkManager.service
+        enabled: true
+    - name: Ensure user group exists
+      ansible.builtin.group:
+        name: "{{ username }}"
+        state: present
+    - name: User anlegen
+      ansible.builtin.user:
+        name: "{{ username }}"
+        shell: "{{ usershell }}"
+        group: "{{ username }}"
+        groups: "{{ usergroups }}"
+        append: true
+    - name: Vivaldi tmp (mkdir src)
+      ansible.builtin.file:
+        path: /tmp/vivaldi
+        state: directory
+    - name: Vivaldi tmp (mkdir dest)
+      ansible.builtin.file:
+        path: "/home/{{ username }}/.cache"
+        state: directory
+    - name: Vivaldi tmp (ln)
+      ansible.builtin.file:
+        src: /tmp/vivaldi
+        dest: "/home/{{ username }}/.cache/vivaldi"
+        state: link     
+    - name: Enable sudo
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        regexp: '^#%wheel'
+        line: "%wheel ALL=(ALL) ALL"
+    - name: Set sudo timeout
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        search_string: Defaults timestamp_timeout
+        line: Defaults timestamp_timeout=120
+    - name: Install common packages
+      community.general.pacman:
+        name: "{{ packages }}"
+        state: present
+    - name: Enable Firewall
+      ansible.builtin.systemd:
+        name: ufw.service
+        enabled: true
+    - name: Edit grub-install
+      ansible.builtin.command: grub-install --target=x86_64-efi --efi-directory=/boot/esp --bootloader-id=GRUB
+    - name: Edit grub-mkconfig
+      ansible.builtin.command: grub-mkconfig -o /boot/grub/grub.cfg
+    - name: Edit reflector.conf
+      ansible.builtin.copy:
+        dest: /etc/xdg/reflector/reflector.conf
+        content: |
+          --protocol https
+          --country Germany
+          --latest 30
+          --sort rate
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Enable Reflector Service
+      ansible.builtin.systemd:
+        name: reflector.service
+        enabled: true
+    - name: Edit makepkg.conf (MAKEFLAGS)
+      ansible.builtin.lineinfile:
+        path: /etc/makepkg.conf
+        regexp: '^#MAKEFLAGS'
+        line: MAKEFLAGS="-j8"
+    - name: Edit makepkg.conf (BUILDDIR)
+      ansible.builtin.lineinfile:
+        path: /etc/makepkg.conf
+        regexp: '^#BUILDDIR'
+        line: BUILDDIR=/tmp/makepkg
+    - name: Edit pacman.conf (1)
+      ansible.builtin.lineinfile:
+        path: /etc/pacman.conf
+        regexp: '^#Color'
+        line: Color
+    - name: Edit pacman.conf (2)
+      ansible.builtin.lineinfile:
+        path: /etc/pacman.conf
+        regexp: '^#\[multilib'
+        line: [multilib]
+    - name: Edit pacman.conf (3)
+      ansible.builtin.lineinfile:
+        path: /etc/pacman.conf
+        regexp: '^#Include = /etc/pacman.d/mirrorlist'
+        line: Include = /etc/pacman.d/mirrorlist

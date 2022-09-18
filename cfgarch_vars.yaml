@@ -1,0 +1,37 @@
+username: nrittsti
+usershell: /bin/fish
+hostname: workstation
+usergroups: network,power,video,storage,lp,audio,wheel,optical
+language: en_US.UTF-8
+region: de_DE.UTF-8
+packages:
+  - grub
+  - efibootmgr
+  - reflector
+  - ntfs-3g
+  - exfat-utils
+  - gzip
+  - curl
+  - vim
+  - acpi
+  - archiso
+  - dosfstools
+  - exfat-utils 
+  - git
+  - htop
+  - most
+  - neofetch
+  - nfs-utils
+  - p7zip
+  - pacman-contrib
+  - parted
+  - pulseaudio-bluetooth
+  - pulseaudio-zeroconf
+  - python-pip
+  - ranger
+  - rsync
+  - ufw
+  - unrar
+  - unzip
+  - wget
+  - micro
