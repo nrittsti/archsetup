@@ -23,9 +23,9 @@
         mode: '0644'
     - name: Set hostname in /etc/hosts
       ansible.builtin.replace:
-      path: /etc/hosts
-      regexp: "replaceit"
-      replace: "{{ hostname }}"
+        path: /etc/hosts
+        regexp: "replaceit"
+        replace: "{{ hostname }}"
     - name: Create locale.conf (1)
       ansible.builtin.copy:
         dest: /etc/locale.conf
@@ -46,14 +46,14 @@
         mode: '0644'
     - name: Create locale.conf (2)
       ansible.builtin.replace:
-      path: /etc/locale.conf
-      regexp: "language"
-      replace: "{{ language }}"
+        path: /etc/locale.conf
+        regexp: "language"
+        replace: "{{ language }}"
     - name: Create locale.conf (3)
       ansible.builtin.replace:
-      path: /etc/locale.conf
-      regexp: "region"
-      replace: "{{ region }}"
+        path: /etc/locale.conf
+        regexp: "region"
+        replace: "{{ region }}"
     - name: Edit locale.gen
       ansible.builtin.copy:
         dest: /etc/locale.gen
@@ -89,9 +89,9 @@
         mode: '0644'
     - name: Create temp directories (2)
       ansible.builtin.replace:
-      path: /usr/lib/tmpfiles.d/tmp.conf
-      regexp: "replaceit"
-      replace: "{{ username }}"
+        path: /usr/lib/tmpfiles.d/tmp.conf
+        regexp: "replaceit"
+        replace: "{{ username }}"
     - name: Timezone
       ansible.builtin.file:
         src: /usr/share/zoneinfo/Europe/Berlin
@@ -181,7 +181,7 @@
       ansible.builtin.lineinfile:
         path: /etc/pacman.conf
         regexp: '^#\[multilib'
-        line: [multilib]
+        line: "[multilib]"
     - name: Edit pacman.conf (3)
       ansible.builtin.lineinfile:
         path: /etc/pacman.conf
