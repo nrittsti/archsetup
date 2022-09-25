@@ -143,6 +143,10 @@
       ansible.builtin.systemd:
         name: ufw.service
         enabled: true
+    - name: Enable Periodic TRIM
+      ansible.builtin.systemd:
+        name: fstrim.timer
+        enabled: true
     - name: Edit grub-install
       ansible.builtin.command: grub-install --target=x86_64-efi --efi-directory=/boot/esp --bootloader-id=GRUB
     - name: Edit grub-mkconfig
