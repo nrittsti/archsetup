@@ -115,16 +115,20 @@
     - name: Vivaldi tmp (mkdir src)
       ansible.builtin.file:
         path: /tmp/vivaldi
-        state: directory
+        state: directory        
     - name: Vivaldi tmp (mkdir dest)
       ansible.builtin.file:
         path: "/home/{{ username }}/.cache"
         state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
     - name: Vivaldi tmp (ln)
       ansible.builtin.file:
         src: /tmp/vivaldi
         dest: "/home/{{ username }}/.cache/vivaldi"
-        state: link     
+        state: link
+        owner: "{{ username }}"
+        group: "{{ username }}"
     - name: Enable sudo
       ansible.builtin.lineinfile:
         path: /etc/sudoers
