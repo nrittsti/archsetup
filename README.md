@@ -53,6 +53,9 @@ pacstrap /mnt btrfs-progs base base-devel linux linux-lts linux-firmware nano ba
 genfstab -Lp /mnt > /mnt/etc/fstab
 # chroot
 arch-chroot /mnt
+# Localization
+# Edit /etc/locale.gen and uncomment en_US.UTF-8 UTF-8 and other needed locales. Generate the locales by running:
+locale-gen
 ```
 
 ## Configuration with Ansible
