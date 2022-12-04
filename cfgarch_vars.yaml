@@ -4,6 +4,7 @@ hostname: workstation
 usergroups: network,power,video,storage,lp,audio,wheel,optical
 language: en_US.UTF-8
 region: de_DE.UTF-8
+keyboard: de pc105 nodeadkeys
 packages:
   - grub
   - efibootmgr
