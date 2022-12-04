@@ -168,7 +168,7 @@
         mode: '0644'
     - name: Enable Reflector Service
       ansible.builtin.systemd:
-        name: reflector.service
+        name: reflector.timer
         enabled: true
     - name: Edit makepkg.conf (MAKEFLAGS)
       ansible.builtin.lineinfile:
