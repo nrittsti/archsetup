@@ -194,4 +194,6 @@
       ansible.builtin.lineinfile:
         path: /etc/pacman.conf
         regexp: '^#Include = /etc/pacman.d/mirrorlist'
-        line: Include = /etc/pacman.d/mirrorlist
+        line: Include = /etc/pacman.d/mirrorlist    
+    - name: Set X Keyboard Layout
+      ansible.builtin.shell: localectl set-x11-keymap {{ keyboard }}
