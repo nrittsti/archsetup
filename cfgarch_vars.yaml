@@ -25,14 +25,13 @@ packages:
   - nfs-utils
   - p7zip
   - pacman-contrib
-  - parted
-  - pulseaudio-bluetooth
-  - pulseaudio-zeroconf
-  - python-pip
-  - ranger
+  - parted  
+  - python-pip  
   - rsync
   - ufw
   - unrar
   - unzip
+  - zip
   - wget
   - micro
+  - terminus-font
