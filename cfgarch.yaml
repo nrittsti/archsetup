@@ -151,10 +151,6 @@
       ansible.builtin.systemd:
         name: fstrim.timer
         enabled: true
-    - name: Edit grub-install
-      ansible.builtin.command: grub-install --target=x86_64-efi --efi-directory=/boot/esp --bootloader-id=GRUB
-    - name: Edit grub-mkconfig
-      ansible.builtin.command: grub-mkconfig -o /boot/grub/grub.cfg
     - name: Edit reflector.conf
       ansible.builtin.copy:
         dest: /etc/xdg/reflector/reflector.conf
@@ -170,6 +166,14 @@
       ansible.builtin.systemd:
         name: reflector.timer
         enabled: true
+    - name: Enable Paccache Service
+      ansible.builtin.systemd:
+        name: paccache.timer
+        enabled: true
+    - name: Mask lvm2-monitor.service
+      ansible.builtin.systemd:
+        name: lvm2-monitor.service
+        masked: true
     - name: Edit makepkg.conf (MAKEFLAGS)
       ansible.builtin.lineinfile:
         path: /etc/makepkg.conf
@@ -194,6 +198,13 @@
       ansible.builtin.lineinfile:
         path: /etc/pacman.conf
         regexp: '^#Include = /etc/pacman.d/mirrorlist'
-        line: Include = /etc/pacman.d/mirrorlist    
-    - name: Set X Keyboard Layout
-      ansible.builtin.shell: localectl set-x11-keymap {{ keyboard }}
+        line: Include = /etc/pacman.d/mirrorlist
+    - name: Systemd Journal Size
+      ansible.builtin.replace:
+        path: /etc/systemd/journald.conf
+        regexp: '^#SystemMaxUse='
+        replace: 'SystemMaxUse=100M'
+    - name: Edit grub-install
+      ansible.builtin.command: grub-install --target=x86_64-efi --efi-directory=/boot/esp --bootloader-id=GRUB
+    - name: Edit grub-mkconfig
+      ansible.builtin.command: grub-mkconfig -o /boot/grub/grub.cfg

@@ -48,7 +48,7 @@ mount  /dev/nvme0n1p1 /mnt/boot/esp
 # Update Pacman Mirrors
 reflector --verbose --country 'Germany' -l 10 -p https --sort rate --save /etc/pacman.d/mirrorlist
 # install base system
-pacstrap /mnt btrfs-progs base base-devel linux linux-lts linux-firmware nano bash-completion intel-ucode amd-ucode networkmanager man-db man-pages texinfo fish ansible
+pacstrap /mnt btrfs-progs base base-devel git linux linux-lts linux-firmware nano bash-completion intel-ucode amd-ucode networkmanager man-db man-pages texinfo fish ansible
 # /etc/fstab generieren
 genfstab -Lp /mnt > /mnt/etc/fstab
 # chroot
