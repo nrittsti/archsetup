@@ -129,6 +129,7 @@
         state: link
         owner: "{{ username }}"
         group: "{{ username }}"
+      ignore_errors: yes
     - name: Enable sudo
       ansible.builtin.lineinfile:
         path: /etc/sudoers
@@ -208,5 +209,3 @@
       ansible.builtin.command: grub-install --target=x86_64-efi --efi-directory=/boot/esp --bootloader-id=GRUB
     - name: Edit grub-mkconfig
       ansible.builtin.command: grub-mkconfig -o /boot/grub/grub.cfg
-    - name: Install yay
-      ansible.builtin.command: git clone https://aur.archlinux.org/yay.git /tmp/yay && cd yay && makepkg -si --noconfirm
